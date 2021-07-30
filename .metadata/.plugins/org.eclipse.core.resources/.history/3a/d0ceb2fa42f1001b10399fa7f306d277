@@ -1,0 +1,13 @@
+package com.trukea.customer;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class TrukeaCustomerApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
