@@ -1,0 +1,42 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/fullpagelayout.html}">
+
+
+<body class="body-wrapper">
+
+
+<th:block layout:fragment="pagecontent">
+<section class="login py-5 border-top-1">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8 align-item-center">
+                <div class="border">
+                    <h3 class="bg-gray p-4">Verify MobileNo</h3>
+                    <p th:text=${message}></p>
+                    <form  method="post" th:object=${verifyOtpForm}>
+                        <fieldset class="p-4">
+                            <input type="hidden" th:field=*{userAccountNo}  class="border p-3 w-100 my-2">
+                            <input type="text" placeholder="OtpCode" th:field=*{otpCode} class="border p-3 w-100 my-2">
+                            <p class="alert alert-danger" th:errors="*{otpCode}" th:if="${#fields.hasErrors('otpCode')}"></p>
+                            <button type="submit" class="d-block py-3 px-5 bg-primary text-white border-0 rounded font-weight-bold mt-3">Verify</button>
+                            
+
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</th:block>
+
+<!--============================
+=            Footer            =
+=============================-->
+
+
+
+</body>
+
+</html>

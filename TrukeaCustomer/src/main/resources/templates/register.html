@@ -13,19 +13,28 @@
                 <div class="col-lg-5 col-md-8 align-item-center">
                     <div class="border border">
                         <h3 class="bg-gray p-4">Register Now</h3>
-                        <form action="#">
+                        <form action="/register" method="post" th:object="${customerRegistrationForm}">
                             <fieldset class="p-4">
-                                <input type="email" placeholder="Email*" class="border p-3 w-100 my-2">
-                                <input type="text" placeholder="FirtsName*" class="border p-3 w-100 my-2">
-                                <input type="text" placeholder="LastName*" class="border p-3 w-100 my-2">
-                                <input type="text" placeholder="DisplayName*" class="border p-3 w-100 my-2">
-                                <input type="text" placeholder="MobileNo*" class="border p-3 w-100 my-2">
-                                <input type="password" placeholder="Password*" class="border p-3 w-100 my-2">
-                                <input type="password" placeholder="Confirm Password*" class="border p-3 w-100 my-2">
+                                <input type="email" placeholder="Email*" th:field="*{emailAddress}" class="border p-3 w-100 my-2">
+                                <p class="alert alert-danger" th:errors=*{emailAddress} th:if="${#fields.hasErrors('emailAddress')}" ></p>
+                                <input type="text" placeholder="FirtsName*" th:field="*{firstName}"    class="border p-3 w-100 my-2">
+                                <p class="alert alert-danger" th:errors=*{firstName} th:if="${#fields.hasErrors('firstName')}" ></p>
+                                <input type="text" placeholder="LastName*" th:field="*{lastName}" class="border p-3 w-100 my-2">
+                               <p class="alert alert-danger" th:errors=*{lastName} th:if="${#fields.hasErrors('lastName')}" ></p>
+                               
+                                <input type="text" placeholder="DisplayName*"  th:field="*{displayName}" class="border p-3 w-100 my-2">
+                               <p class="alert alert-danger" th:errors=*{displayName} th:if="${#fields.hasErrors('displayName')}" ></p>
+                                <input type="text" placeholder="MobileNo*" th:field="*{mobileNo}" class="border p-3 w-100 my-2">
+                               <p class="alert alert-danger" th:errors=*{mobileNo} th:if="${#fields.hasErrors('mobileNo')}" ></p>
+                                <input type="password" placeholder="Password*" th:field="*{password}" class="border p-3 w-100 my-2">
+                               <p class="alert alert-danger" th:errors=*{password} th:if="${#fields.hasErrors('password')}" ></p>
+                                <input type="password" placeholder="Confirm Password*" th:field="*{reTypePassword}" class="border p-3 w-100 my-2">
+                               <p class="alert alert-danger" th:errors=*{reTypePassword} th:if="${#fields.hasErrors('reTypePassword')}" ></p>
                                 <div class="loggedin-forgot d-inline-flex my-3">
-                                        <input type="checkbox" id="registering" class="mt-1">
+                                        <input type="checkbox" th:field="*{termsAndConditions}" id="registering" class="mt-1" value="1">
                                         <label for="registering" class="px-2">By registering, you accept our <a class="text-primary font-weight-bold" href="terms-condition.html">Terms & Conditions</a></label>
                                 </div>
+                                <p class="alert alert-danger" th:errors=*{termsAndConditions} th:if="${#fields.hasErrors('termsAndConditions')}" ></p>
                                 <button type="submit" class="d-block py-3 px-4 bg-primary text-white border-0 rounded font-weight-bold">Register Now</button>
                             </fieldset>
                         </form>

@@ -3,6 +3,7 @@ package com.trukea.accountservice;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
 @SpringBootApplication
 public class AccountserviceApplication {
 
@@ -10,4 +11,9 @@ public class AccountserviceApplication {
 		SpringApplication.run(AccountserviceApplication.class, args);
 	}
 
+	
+	/*
+	 * @Bean public BCryptPasswordEncoder password() { return new
+	 * BCryptPasswordEncoder; }
+	 */
 }
