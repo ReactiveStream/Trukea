@@ -1,10 +1,12 @@
 package com.trukea.customer.validator.form;
 
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import com.trukea.customer.form.account.ForgetPasswordForm;
 
+@Component
 public class ForgetPasswordFormValidator implements Validator {
 
 	@Override

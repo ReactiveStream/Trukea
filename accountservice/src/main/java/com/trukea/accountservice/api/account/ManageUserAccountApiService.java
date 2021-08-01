@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -58,12 +59,31 @@ public class ManageUserAccountApiService {
 	
 	
 	
-	@GetMapping(value="/useraccount/{mobileno}",produces=MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value="/useraccount/{mobileno}/mobile",produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserAccountDto>  getUserAccountDtoByMobileno(@PathVariable("mobileno")String MobileNo) throws UserNotFoundException{
 		UserAccountDto userAccountDto=accountService.getUserAccountByMobileNo(MobileNo);
 		return ResponseEntity.ok(userAccountDto);
 	}
 	
+	@GetMapping(value="/useraccount/{emailaddress}/email",produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> checkUserByEmailAddress(@PathVariable("emailaddress")String emailaddress) throws UserNotFoundException{
+		UserAccountDto userAccountDto=accountService.getUserAccountByEmail(emailaddress);
+		return ResponseEntity.ok(String.valueOf(userAccountDto.getUserAccountNo()));
+	}
+	
+	
+	 @PostMapping(value="/forgetpassword/{emailaddress}/verify",produces=MediaType.TEXT_PLAIN_VALUE)
+	    public ResponseEntity sendEmailToResetPasssword(@PathVariable("emailaddress")String emailaddress) throws AccountServiceException{
+		 accountService.sendEmailVerificationForResetPassword(emailaddress);
+		return ResponseEntity.noContent().build();
+	 }
+	 
+	 
+	 @PostMapping(value="/forgetpassword/{mobileno}/verifymobile",produces=MediaType.TEXT_PLAIN_VALUE,consumes=MediaType.TEXT_PLAIN_VALUE)
+	    public ResponseEntity sendOtpToResetPasssword(@PathVariable("mobileno")String mobileno) throws AccountServiceException{
+	 accountService.sendOtpCodeToResetPassword(mobileno);
+		return ResponseEntity.noContent().build();
+	 }
 	
 	
 	@GetMapping(value="/customer/registration/{otpcode}/{useraccountno}/verifymobile",produces=MediaType.TEXT_PLAIN_VALUE)
@@ -101,6 +121,25 @@ public class ManageUserAccountApiService {
 		return ResponseEntity.ok(String.valueOf(count));
 	}
 
+	 @GetMapping(value="/forgetpassword/{emailverificationcode}/email/{useraccountno}/verify",produces=MediaType.TEXT_PLAIN_VALUE)
+	    public ResponseEntity<String> verifyEmailToResetPassword(@PathVariable("emailverificationcode")String emailverificationcode,@PathVariable("useraccountno")String useraccountno) throws NumberFormatException, VerificationCodeMismatchException{
+		String userAccountno= accountService.emailVerificationForResetPassword(emailverificationcode, Long.parseLong(useraccountno));
+		 return ResponseEntity.ok(userAccountno);
+	 }
+	    
+	 
+	    @GetMapping(value="/forgetpassword/{otp}/mobile/{useraccountno}/verify",produces=MediaType.TEXT_PLAIN_VALUE)
+	    public ResponseEntity<String> verifyOtpToResetPassword(@PathVariable("otp")String otp,@PathVariable("useraccountno")String useraccountno) throws NumberFormatException, VerificationCodeMismatchException{
+	    	String userAccountno=accountService.otpVerificationForResetPassword(otp, Long.parseLong(useraccountno));
+	    	return ResponseEntity.ok(userAccountno);
+	    }
+	    
+	    @PutMapping(value="/resetpassword",produces=MediaType.TEXT_PLAIN_VALUE,consumes=MediaType.APPLICATION_JSON_VALUE)
+	    public ResponseEntity<String> resetPassword(@RequestBody UserAccountDto useraccountdto) throws AccountServiceException{
+	    	String userAccountno=accountService.resetPassword(useraccountdto);
+	    	return ResponseEntity.ok(userAccountno);
+	    	
+	    }
 	
 	@ExceptionHandler(VerificationCodeMismatchException.class)
 	public ResponseEntity<List<TrukeaError>> handleVerificationCodeMismatchException(VerificationCodeMismatchException e){

@@ -14,7 +14,7 @@
                 <div class="border">
                     <h3 class="bg-gray p-4">Verify MobileNo</h3>
                     <p th:text=${message}></p>
-                    <form  method="post" th:object=${verifyOtpForm}>
+                    <form  action="/verifyotpforregistration" method="post" th:object=${verifyOtpForm}>
                         <fieldset class="p-4">
                             <input type="hidden" th:field=*{userAccountNo}  class="border p-3 w-100 my-2">
                             <input type="text" placeholder="OtpCode" th:field=*{otpCode} class="border p-3 w-100 my-2">

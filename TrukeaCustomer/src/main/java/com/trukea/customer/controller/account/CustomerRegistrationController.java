@@ -22,6 +22,7 @@ import com.trukea.customer.form.account.VerifyOtpForm;
 import com.trukea.customer.service.account.AccountService;
 import com.trukea.customer.validator.form.CustomerRegistrationFormValidator;
 import com.trukea.customer.validator.form.ForgetPasswordFormValidator;
+import com.trukea.customer.validator.form.ResetPasswordFormValidator;
 
 @Controller
 public class CustomerRegistrationController {
@@ -31,10 +32,12 @@ public class CustomerRegistrationController {
 	public static final String REGISTRATION_SUCCESSFUL_PAGE="registration-success";
 	public static final String EMAILVERIFICATION_SUCCESS_PAGE="registration-email-verification";
 	public static final String VERIFY_OTP_FOR_REGISTRATION_PAGE="verifyotpforregistration";
+	public static final String VERIFY_OTP_FOR_RESET_PASSWORD="verifyotpforresetpassword";
 	public static final String ACTIVATED_ACCOUNT_PAGE="accountactivated";
 	public static final String FORGET_PASSWORD_PAGE="forgetpassword";
 	public static final String EMAIL_VERIFICATION_FOR_RESET_PASSWORD="resetpassword-email-verification";
 	public static final String RESET_PASSWORD_PAGE="resetpassword";
+	public static final String RESET_PASWORD_SUCCESS_PAGE="resetpasswordsuccess";
 	public static final String GLOBAL_ERROR_PAGE="error";
 	
 	
@@ -44,6 +47,10 @@ public class CustomerRegistrationController {
 	
 	@Autowired
 	public ForgetPasswordFormValidator forgetPasswordValidator;
+	
+	
+	@Autowired 
+	public ResetPasswordFormValidator resetPasswordFormValidator;
 	
 	
 	@Autowired
@@ -139,38 +146,135 @@ public String getForgetPasswordPage(Model model) {
 }
 
 
+/**
+ * @param form
+ * @param errors
+ * @param model
+ * @return
+ */
+/**
+ * @param form
+ * @param errors
+ * @param model
+ * @return
+ */
 @PostMapping("/forgetpassword")
 public String forgetPassword(@ModelAttribute("forgetPasswordForm")@Valid ForgetPasswordForm form,BindingResult errors,Model model) {
 	
+	String otpcode=null;
 	if(errors.hasErrors()) {
+		System.out.println("binding");
 		return FORGET_PASSWORD_PAGE;
 	}
 	if(forgetPasswordValidator.supports(ForgetPasswordForm.class)){
+		
 		forgetPasswordValidator.validate(form, errors);
+		System.out.println("validator");
 	}
 	
-	if(form.getEmailAddress()!=null) {
+	if(form.getEmailAddress()!=null&&form.getEmailAddress().trim().length()!=0) {
+		String useraccountno=accountService.checkUserByEmailAddress(form.getEmailAddress()).getBody();
+		if(useraccountno!=null) {
+			 accountService.sendEmailToResetPasssword(form.getEmailAddress()).getBody();
+
+		
+		 
+		
 		return  EMAIL_VERIFICATION_FOR_RESET_PASSWORD;
+		}
+		else {
+			return GLOBAL_ERROR_PAGE;
+			
+		}
 		
 	}
 	
 	if(form.getMobileNo()!=null) {
 	UserAccountDto userAccountDto=	accountService.getUserAccountDtoByMobileno(form.getMobileNo()).getBody();
-	
-	
-	ResetPasswordForm resetPasswordForm=new ResetPasswordForm();
-	resetPasswordForm.setUserAccountNo(userAccountDto.getUserAccountNo());
-	model.addAttribute("resetPasswordForm", resetPasswordForm);
-	
-	return RESET_PASSWORD_PAGE;
+	if(userAccountDto!=null) {
 		
-		
+	accountService.sendOtpToResetPasssword(form.getMobileNo());
+	
+	VerifyOtpForm verifyotpform=new VerifyOtpForm();
+	verifyotpform.setUserAccountNo(userAccountDto.getUserAccountNo());
+	model.addAttribute("verifyOtpForm", verifyotpform);
+	return VERIFY_OTP_FOR_RESET_PASSWORD;
+	}	
 	}
 	
 	return GLOBAL_ERROR_PAGE;
 	
 }
 	
+
+@GetMapping("/customer/{emailverificationcode}/resetpassword/{useraccountno}/email")
+public String emailVerificationToResetPassword(@PathVariable("emailverificationcode")String emailverificationcode,@PathVariable("useraccountno")String useraccountno,Model model) {
+String userAccountno=	 accountService.verifyEmailToResetPassword(emailverificationcode, useraccountno).getBody();
+if(userAccountno!=null) {
+	ResetPasswordForm form=new ResetPasswordForm();
+	form.setUserAccountNo(Long.parseLong(userAccountno));
+	
+	model.addAttribute("ResetPasswordForm", form);
+	return RESET_PASSWORD_PAGE;
+	
+	
+}
+return GLOBAL_ERROR_PAGE;
+
+
+}
+
+
+@PostMapping("/verifyotp/resetpassword")
+public String verifyOtpAndShowResetPasswordPage(@ModelAttribute("verifyOtpForm")VerifyOtpForm form,Model model,BindingResult errors) {
+	
+	if(errors.hasErrors()) {
+		return VERIFY_OTP_FOR_RESET_PASSWORD;
+	}
+	
+	String userAccountno=accountService.verifyOtpToResetPassword(form.getOtpCode(), String.valueOf(form.getUserAccountNo())).getBody();
+	if(userAccountno!=null) {
+		ResetPasswordForm rform=new ResetPasswordForm();
+		rform.setUserAccountNo(Long.parseLong(userAccountno));
+		
+		
+		model.addAttribute("resetPasswordForm", rform);
+		return RESET_PASSWORD_PAGE;
+		
+	}
+	
+	return GLOBAL_ERROR_PAGE;
+	
+}
+
+
+
+@PostMapping("/resetpassword")
+public String resetPassword(@ModelAttribute("resetPasswordForm")@Valid ResetPasswordForm form,BindingResult errors,Model model) {
+	UserAccountDto useraccountdto=null;
+	
+	if(errors.hasErrors()) {
+		return RESET_PASSWORD_PAGE;
+	}
+if(	resetPasswordFormValidator.supports(ResetPasswordForm.class))
+		{
+	resetPasswordFormValidator.validate(form, errors);
+}
+useraccountdto=new UserAccountDto();
+System.out.println("reset"+form.getUserAccountNo());
+useraccountdto.setUserAccountNo(form.getUserAccountNo());
+useraccountdto.setPassword(form.getPassword());
+
+String userAccountno=accountService.resetPassword(useraccountdto).getBody();
+
+if(userAccountno!=null) {
+	return RESET_PASWORD_SUCCESS_PAGE;
+}
+	
+	return GLOBAL_ERROR_PAGE;
+	
+	
+}
 
 @ExceptionHandler(VerificationCodeMismatchException.class)
 public String handleverificationCodeMismatchException() {

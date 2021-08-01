@@ -10,6 +10,8 @@ import lombok.Setter;
 public class ResetPasswordForm {
 	
 	private long userAccountNo;
+	
+	 
 	@NotBlank
 	private  String password;
 	@NotBlank
