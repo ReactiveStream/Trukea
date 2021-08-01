@@ -252,7 +252,6 @@ public class AccountService {
 				
 			}
 			
-			
 		
 
 		}
@@ -279,6 +278,36 @@ public class AccountService {
 		}
 		
 		return String.valueOf(useraccountno);
+	}
+	
+	
+	@Transactional(readOnly = true)
+	public UserAccountDto getUserAccount(String emailaddress) throws UserNotFoundException {
+		SystemUser systemUser=null;
+		systemUser=systemUserRepository.findByEmailAddress(emailaddress);
+		UserAccountDto userAccountDto=null;
+		if(systemUser==null) {
+			TrukeaError error=new TrukeaError("EM-401","Account with this email address no found");
+			List<TrukeaError> list=new ArrayList();
+			list.add(error);
+			throw new UserNotFoundException(list);
+			
+		}
+		
+		userAccountDto=new UserAccountDto();
+		userAccountDto.setDisplayName(systemUser.getDisplayName());
+		userAccountDto.setEmailAddress(systemUser.getEmailAddress());
+		userAccountDto.setFirstName(systemUser.getFirstName());
+		userAccountDto.setLastName(systemUser.getLastName());
+		userAccountDto.setMobileNo(systemUser.getMobileNo());
+		userAccountDto.setOtpCodeStatus(systemUser.getOtpCodeVerificationStatus());
+		userAccountDto.setPassword(systemUser.getPassword());
+		userAccountDto.setRoleName(systemUser.getUserRole().getRoleName());
+		userAccountDto.setStatus(systemUser.getStatus());
+		userAccountDto.setUserAccountNo(systemUser.getSystemUserId());
+		
+		return userAccountDto;
+		
 	}
 	
 	@Transactional(readOnly = false)

@@ -63,4 +63,8 @@ public interface AccountService {
     
     @PutMapping(value="/resetpassword",produces=MediaType.TEXT_PLAIN_VALUE,consumes=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> resetPassword(@RequestBody UserAccountDto useraccountdto);
+    
+    
+    @GetMapping(value="/getuser/{emailaddress}/useraccount",produces=MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserAccountDto> getUserAccountDtoByEmailAddress(@PathVariable("emailaddress")String emailaddress);
 }

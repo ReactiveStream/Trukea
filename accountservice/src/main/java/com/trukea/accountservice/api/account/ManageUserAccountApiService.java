@@ -140,6 +140,13 @@ public class ManageUserAccountApiService {
 	    	return ResponseEntity.ok(userAccountno);
 	    	
 	    }
+	    
+	    
+	    @GetMapping(value="/getuser/{emailaddress}/useraccount",produces=MediaType.APPLICATION_JSON_VALUE)
+	    public ResponseEntity<UserAccountDto> getUserAccountDtoByEmailAddress(@PathVariable("emailaddress")String emailaddress) throws UserNotFoundException{
+	    	   UserAccountDto userAccountDto=accountService.getUserAccountByEmail(emailaddress);
+	    	   return ResponseEntity.ok(userAccountDto);
+	    }
 	
 	@ExceptionHandler(VerificationCodeMismatchException.class)
 	public ResponseEntity<List<TrukeaError>> handleVerificationCodeMismatchException(VerificationCodeMismatchException e){

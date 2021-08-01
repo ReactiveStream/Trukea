@@ -16,6 +16,8 @@ public interface SystemUserRepository extends JpaRepository<SystemUser,Long> {
 	
 	SystemUser findByEmailAddressAndStatus(String emailaddress,String status);
 	
+	SystemUser findByEmailAddress(String emailaddress);
+	
 	
 	
 	@Query("update SystemUser su set su.emailVerificationCode=?1,su.emailVerificationCodeGeneratedDate=?3 where su.emailAddress=?2")
