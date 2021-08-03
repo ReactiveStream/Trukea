@@ -3,6 +3,7 @@ package com.trukea.customer.controller.account;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -46,6 +47,10 @@ public class CustomerRegistrationController {
 	
 	
 	@Autowired
+	public PasswordEncoder passwordEncoder;
+	
+	
+	@Autowired
 	public ForgetPasswordFormValidator forgetPasswordValidator;
 	
 	
@@ -81,7 +86,7 @@ public class CustomerRegistrationController {
 		  userAccountDto.setEmailAddress(form.getEmailAddress());
 		  userAccountDto.setFirstName(form.getFirstName());
 		  userAccountDto.setLastName(form.getLastName());
-		  userAccountDto.setPassword(form.getPassword());
+		  userAccountDto.setPassword(passwordEncoder.encode(form.getPassword()));
 		  userAccountDto.setMobileNo(form.getMobileNo());
 		  
 		  try {
@@ -263,7 +268,7 @@ if(	resetPasswordFormValidator.supports(ResetPasswordForm.class))
 useraccountdto=new UserAccountDto();
 System.out.println("reset"+form.getUserAccountNo());
 useraccountdto.setUserAccountNo(form.getUserAccountNo());
-useraccountdto.setPassword(form.getPassword());
+useraccountdto.setPassword(passwordEncoder.encode(form.getPassword()));
 
 String userAccountno=accountService.resetPassword(useraccountdto).getBody();
 

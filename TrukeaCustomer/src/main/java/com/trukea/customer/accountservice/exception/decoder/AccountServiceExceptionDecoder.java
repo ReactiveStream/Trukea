@@ -21,6 +21,8 @@ public class AccountServiceExceptionDecoder  implements ErrorDecoder{
 	@Override
 	public Exception decode(String methodKey, Response response) {
 		
+		System.out.println(response.body().toString());
+		
 		Exception exception=null;
 		Reader reader=null;
 		ObjectMapper mapper=null;

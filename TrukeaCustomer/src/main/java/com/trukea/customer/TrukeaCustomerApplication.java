@@ -19,7 +19,7 @@ public class TrukeaCustomerApplication implements WebMvcConfigurer {
 
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addViewController("/trukeahome").setViewName("Trukea-Home");
+		//registry.addViewController("/trukeahome").setViewName("Trukea-Home");
 		registry.addViewController("/login").setViewName("login");
 		
 	}

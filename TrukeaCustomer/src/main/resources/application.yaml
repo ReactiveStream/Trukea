@@ -9,4 +9,6 @@ accountService:
   url: http://localhost:8081
   apiKey: acheter_customer_web
   secret: Abcd1234@
-  
+    
+adsTradingService:
+  url: http://localhost:8082  
